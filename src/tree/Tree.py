@@ -216,8 +216,8 @@ def test_tree():
         print("9. Determinar si un nodo es hoja.")
         print("10. Determinar si un nodo es predecesor de otro.")
         print("11. Determinar el nivel del árbol.")
-        print("12. Salir.")
-        option = int(input("Selecicone una opcion: "))
+        print("Other. Exit.")
+        option = int(input("Seleccione una opcion: "))
 
         if option == 1:
             value = int(input("Introduzca un valor para el vértice: "))
@@ -331,7 +331,7 @@ def test_tree():
                 result = list(prolog.query(f"level(Level, {tree_prolog})"))
                 print(result)
 
-        elif option == 12:
+        else:
             close_menu = True
 
         print()
