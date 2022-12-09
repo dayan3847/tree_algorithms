@@ -1,2 +1,0 @@
-from src.file_manager.FileManager import FileManager
-from src.file_manager.FrequencyCalculator import FrequencyCalculator

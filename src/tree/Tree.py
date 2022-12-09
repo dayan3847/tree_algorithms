@@ -2,38 +2,34 @@ from copy import deepcopy
 
 from pyswip import Prolog
 
-from src.tree.TreeObject import TreeObject
-
 
 class Tree:
-    data: TreeObject
+    data: float
     left: 'Tree'
     right: 'Tree'
     parent: 'Tree'
 
-    def __init__(self, data: TreeObject, left: 'Tree' = None, right: 'Tree' = None, parent: 'Tree' = None):
+    def __init__(self, data: float, left: 'Tree' = None, right: 'Tree' = None, parent: 'Tree' = None):
         self.data = data
         self.left = left
         self.right = right
         self.parent = parent
 
     def __str__(self) -> str:
-        tree_str = '{'
-        tree_str += f'"name":"{self.data.name}"'
-        tree_str += f',"value":"{str(self.data.value)}"'
+        tree_str = f'tree({str(self.data)}, '
         # left
-        tree_str += ',"left":'
         if self.left is not None:
             tree_str += str(self.left)
         else:
-            tree_str += '"None"'
+            tree_str += 'nil'
+        tree_str += ', '
         # right
-        tree_str += ',"right":'
         if self.right is not None:
             tree_str += str(self.right)
         else:
-            tree_str += '"None"'
-        tree_str += '}'
+            tree_str += 'nil'
+        tree_str += ')'
+
         return tree_str
 
     def __gt__(self, other: 'Tree'):
@@ -54,32 +50,33 @@ class Tree:
     def __ne__(self, other: 'Tree'):
         return self.data != other.data
 
-    def add_new_vertex(self, new_vertex: 'Tree', tree: 'Tree'):
-        if new_vertex <= tree:
-            if not tree.left:
-                tree.left = new_vertex
-                new_vertex.parent = tree
+    # add_new_vertex
+    def insert(self, new_data: float):
+        if new_data < self.data:
+            if self.left is None:
+                self.left = Tree(new_data)
+                self.left.parent = self
                 return
             else:
-                self.add_new_vertex(new_vertex, tree.left)
+                self.left.insert(new_data)
         else:
-            if not tree.right:
-                tree.right = new_vertex
-                new_vertex.parent = tree
+            if self.right is None:
+                self.right = Tree(new_data)
+                self.right.parent = self
                 return
             else:
-                self.add_new_vertex(new_vertex, tree.right)
+                self.right.insert(new_data)
 
     def in_order_tour(self):
         if None is not self.left:
             self.left.in_order_tour()
-        print(self.data.value, end=", ")
+        print(self.data, end=", ")
         if None is not self.right:
             self.right.in_order_tour()
 
     def preorder_tour(self, tree: 'Tree'):
         if tree:
-            print(tree.data.value, end=", ")
+            print(tree.data, end=", ")
             self.preorder_tour(tree.left)
             self.preorder_tour(tree.right)
 
@@ -103,45 +100,6 @@ class Tree:
         else:
             return self.get_vertex(vertex, tree.right)
 
-    def delete_vertex(self, vertex: 'Tree', tree: 'Tree') -> 'Tree':
-
-        found_vertex: 'Tree' = self.get_vertex(vertex, tree)
-
-        if found_vertex.left is None and found_vertex.right is None:
-            if found_vertex.parent.left is not None and found_vertex.parent.left == found_vertex:
-                found_vertex.parent.left = None
-            else:
-                found_vertex.parent.right = None
-        elif found_vertex.left is None:
-            self.transplant(found_vertex, found_vertex.right, tree)
-        elif found_vertex.right is None:
-            self.transplant(found_vertex, found_vertex.left, tree)
-        else:
-            temp: 'Tree' = found_vertex.right
-            while temp.left is not None:
-                temp = temp.left
-
-            if temp.parent != found_vertex:
-                self.transplant(temp, temp.right, tree)
-                temp.right = found_vertex.right
-                temp.right.parent = temp
-            self.transplant(found_vertex, temp, tree)
-            temp.left = found_vertex.left
-            temp.left.parent = temp
-            if found_vertex.parent is None:
-                return temp
-        return tree
-
-    def transplant(self, vertex_a: 'Tree', vertex_b: 'Tree', tree: 'Tree'):
-        if vertex_a.parent is not None:
-            if vertex_a == vertex_a.parent.left:
-                vertex_a.parent.left = vertex_b
-            else:
-                vertex_a.parent.right = vertex_b
-
-        if vertex_b is not None:
-            vertex_b.parent = vertex_a.parent
-
     def adjacent_vertexes(self, vertex: 'Tree', tree: 'Tree') -> list['Tree']:
         if not tree:
             return []
@@ -156,7 +114,7 @@ class Tree:
         if tree:
             self.depth_tour(tree.left)
             self.depth_tour(tree.right)
-            print(tree.data.value, end=", ")
+            print(tree.data, end=", ")
 
     def broad_tour(self, nodes: list['Tree']):
 
@@ -165,7 +123,7 @@ class Tree:
 
         for node in nodes:
             if node is not None:
-                print(node.data.value, end=", ")
+                print(node.data, end=", ")
         print()
 
         children = []
@@ -188,169 +146,3 @@ class Tree:
                 return True
             else:
                 return False
-
-
-def test_tree():
-    tree = Tree(TreeObject('c', 12))
-
-    print(tree)
-
-    tree.add_new_vertex(Tree(TreeObject('b', 6)), tree)
-    tree.add_new_vertex(Tree(TreeObject('a', 2)), tree)
-    tree.add_new_vertex(Tree(TreeObject('d', 14)), tree)
-    tree.add_new_vertex(Tree(TreeObject('e', 8)), tree)
-    tree.add_new_vertex(Tree(TreeObject('f', 10)), tree)
-    tree.add_new_vertex(Tree(TreeObject('g', 4)), tree)
-    tree.add_new_vertex(Tree(TreeObject('h', 18)), tree)
-    tree.add_new_vertex(Tree(TreeObject('i', 16)), tree)
-    tree.add_new_vertex(Tree(TreeObject('j', 20)), tree)
-
-    prolog = Prolog()
-
-    prolog.consult("../file_manager/prolog_bd.pl")
-
-    close_menu = False
-    while not close_menu:
-        print("1. Añadir un vértice.")
-        print("2. Buscar un vértices.")
-        print("3. Buscar adyacentes a un vértices.")
-        print("4. Recorrer en orden.")
-        print("5. Recorrer en preorden.")
-        print("6. Recorrer en profundidad.")
-        print("7. Recorrer a lo ancho.")
-        print("8. Determinar si un nodo es padre de otro.")
-        print("9. Determinar si un nodo es hoja.")
-        print("10. Determinar si un nodo es predecesor de otro.")
-        print("11. Determinar el nivel del árbol.")
-        print("12. Salir.")
-        option = int(input("Selecicone una opcion: "))
-
-        tree_prolog = 'tree(12,tree(6,tree(2,nil,tree(4,nil,nil)),tree(8,nil,tree(10,nil,nil))),' \
-                      'tree(14,nil,tree(18,tree(16,nil,nil),tree(20,nil,nil)))) '
-
-        if option == 1:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                character = input("Introduzca una letra para nombrar al vértice: ")
-                value = int(input("Introduzca un valor para el vértice: "))
-                tree_clone = deepcopy(tree)
-                tree_clone.add_new_vertex(Tree(TreeObject(character, value)), tree_clone)
-                print(tree_clone)
-            elif option == 2:
-                value = input("Introduzca un valor para el vértice: ")
-                temp = f"insert({value}, {tree_prolog}, NewTree)"
-                result = list(prolog.query(temp))
-                print(result)
-
-        elif option == 2:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                character = input("Introduzca la letra del vértice: ")
-                value = int(input("Introduzca el valor del vértice: "))
-                print(tree.exists_vertex(Tree(TreeObject(character, value)), tree))
-            elif option == 2:
-                value = input("Introduzca un valor para el vértice: ")
-                temp = f"find({value},{tree_prolog}, SubTree)"
-                result = bool(list(prolog.query(temp)))
-                print(result)
-
-        # elif option == 3:
-        #     character = input("Introduzca la letra del vértice: ")
-        #     value = int(input("Introduzca el valor del vértice: "))
-        #     tree_clone = deepcopy(tree)
-        #     tree_clone.delete_vertex(Tree(TreeObject(character, value)), tree_clone)
-        #     print(tree_clone)
-
-        elif option == 3:
-            character = input("Introduzca la letra del vértice: ")
-            value = int(input("Introduzca el valor del vértice: "))
-            result = tree.adjacent_vertexes(Tree(TreeObject(character, value)), tree)
-            for i in result:
-                if i is not None:
-                    print(i.data.value)
-
-        elif option == 4:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                tree.in_order_tour()
-                print()
-            elif option == 2:
-                result = list(prolog.query(f"inorder({tree_prolog}, List)"))
-                print(result)
-
-        elif option == 5:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                tree.preorder_tour(tree)
-                print()
-            elif option == 2:
-                result = list(prolog.query(f"preorder({tree_prolog}, List)"))
-                print(result)
-
-        elif option == 6:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                tree.depth_tour(tree)
-                print()
-            elif option == 2:
-                result = list(prolog.query(f"postorder({tree_prolog}, List)"))
-                print(result)
-
-        elif option == 7:
-            tree.broad_tour([tree])
-
-        elif option == 8:
-            value_1 = input("Introduzca un valor para el vértice hijo: ")
-            value_2 = input("Introduzca un valor para el vértice padre: ")
-            temp = f"parent({value_2},{value_1},{tree_prolog})"
-            result = bool(list(prolog.query(temp)))
-            print(result)
-
-        elif option == 9:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                character = input("Introduzca la letra del vértice: ")
-                value = int(input("Introduzca el valor del vértice: "))
-                print(tree.is_leaf(Tree(TreeObject(character, value))))
-            elif option == 2:
-                value = input("Introduzca un valor para el vértice: ")
-                result = bool(list(prolog.query(f"leaf({value}, {tree_prolog})")))
-                print(result)
-
-        elif option == 10:
-            value_1 = input("Introduzca un valor para el vértice hijo: ")
-            value_2 = input("Introduzca un valor para el vértice predecesor: ")
-            temp = f"predecessor({value_2},{value_1},{tree_prolog})"
-            result = bool(list(prolog.query(temp)))
-            print(result)
-
-        elif option == 11:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                print(tree.get_level())
-            elif option == 2:
-                result = list(prolog.query(f"level(Level, {tree_prolog})"))
-                print(result)
-
-        elif option == 12:
-            close_menu = True
-
-        print()
-
-
-if __name__ == '__main__':
-    test_tree()
