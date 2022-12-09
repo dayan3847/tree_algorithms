@@ -148,29 +148,60 @@ class Tree:
                 return False
 
 
-def test_tree():
-    tree = Tree(12)
-    tree.insert(6)
-    tree.insert(2)
-    tree.insert(14)
-    tree.insert(8)
-    tree.insert(10)
-    tree.insert(4)
-    tree.insert(18)
-    tree.insert(16)
-    tree.insert(20)
+def test_tree_insert():
+    tree = Tree(
+        12,
+        Tree(
+            6,
+            Tree(
+                2,
+                None,
+                Tree(4)
+            ),
+            Tree(
+                8,
+                None,
+                Tree(10)
+            )
+        ),
+        Tree(
+            14,
+            None,
+            Tree(
+                18,
+                Tree(16),
+                Tree(20)
+            ),
+        )
+    )
 
-    print('Tree Python:')
+    tree2: Tree = Tree(12)
+    tree2.insert(6)
+    tree2.insert(2)
+    tree2.insert(14)
+    tree2.insert(8)
+    tree2.insert(10)
+    tree2.insert(4)
+    tree2.insert(18)
+    tree2.insert(16)
+    tree2.insert(20)
+
+    print('Tree:')
+    print(tree)
+    print('Tree2:')
+    print(tree2)
+
+
+def test_tree():
+    tree = Tree(12, Tree(6, Tree(2, None, Tree(4)), Tree(8, None, Tree(10))),
+                Tree(14, None, Tree(18, Tree(16), Tree(20)), ))
+
+    print('Tree:')
     print(tree)
 
     tree_prolog = str(tree)
-
-    print('Tree Prolog:')
-    print(tree_prolog)
-
     prolog = Prolog()
-
-    prolog.consult("../prolog/prolog_bd.pl")
+    prolog.consult("../prolog/prolog_knowledge_base.pl")
 
     close_menu = False
     while not close_menu:
@@ -192,14 +223,14 @@ def test_tree():
             value = int(input("Introduzca un valor para el vértice: "))
 
             print("Via Python:")
-            tree_clone = deepcopy(tree)
+            tree_clone: Tree = deepcopy(tree)
             tree_clone.insert(value)
             print("[{'NewTree': '" + str(tree_clone) + "'}]")
 
             print("Via Prolog:")
-            temp = f"insert({value}, {str(tree_prolog)}, NewTree)"
-            result = list(prolog.query(temp))
-            print(result)
+            prolog_query = f"insert({value}, {str(tree_prolog)}, NewTree)"
+            prolog_result = list(prolog.query(prolog_query))
+            print(prolog_result)
 
         elif option == 2:
             print("1. Usar Python.")
@@ -210,8 +241,8 @@ def test_tree():
                 print(tree.exists_vertex(Tree(value), tree))
             elif option == 2:
                 value = input("Introduzca un valor para el vértice: ")
-                temp = f"find({value},{tree_prolog}, SubTree)"
-                result = bool(list(prolog.query(temp)))
+                prolog_query = f"find({value},{tree_prolog}, SubTree)"
+                result = bool(list(prolog.query(prolog_query)))
                 print(result)
 
         # elif option == 3:
@@ -267,8 +298,8 @@ def test_tree():
         elif option == 8:
             value_1 = input("Introduzca un valor para el vértice hijo: ")
             value_2 = input("Introduzca un valor para el vértice padre: ")
-            temp = f"parent({value_2},{value_1},{tree_prolog})"
-            result = bool(list(prolog.query(temp)))
+            prolog_query = f"parent({value_2},{value_1},{tree_prolog})"
+            result = bool(list(prolog.query(prolog_query)))
             print(result)
 
         elif option == 9:
@@ -286,8 +317,8 @@ def test_tree():
         elif option == 10:
             value_1 = input("Introduzca un valor para el vértice hijo: ")
             value_2 = input("Introduzca un valor para el vértice predecesor: ")
-            temp = f"predecessor({value_2},{value_1},{tree_prolog})"
-            result = bool(list(prolog.query(temp)))
+            prolog_query = f"predecessor({value_2},{value_1},{tree_prolog})"
+            result = bool(list(prolog.query(prolog_query)))
             print(result)
 
         elif option == 11:
