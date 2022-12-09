@@ -2,7 +2,7 @@
 
 Programming Paradigms Final Task
 
-* Mario
+* Mario Herrera
 * Dayan Bravo
 
 Tree algorithms in Python and Prolog
