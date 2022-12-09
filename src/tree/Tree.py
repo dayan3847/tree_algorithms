@@ -1,8 +1,3 @@
-from copy import deepcopy
-
-from pyswip import Prolog
-
-
 class Tree:
     data: float
     left: 'Tree'
