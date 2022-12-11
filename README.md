@@ -32,6 +32,70 @@ El sistema utiliza los lenguajes de programación Python y Prolog para realizar 
 
 ![Tree Example](./doc/tree_example.png "Tree Example")
 
+##### Python
+
+```python
+tree = Tree(
+            12,
+            Tree(
+                6,
+                Tree(
+                    2,
+                    None,
+                    Tree(4)
+                ),
+                Tree(
+                    8,
+                    None,
+                    Tree(10)
+                )
+            ),
+            Tree(
+                14,
+                None,
+                Tree(
+                    18,
+                    Tree(16),
+                    Tree(20)
+                ),
+            )
+        )
+```
+
+##### Prolog
+
+```prolog
+tree(
+    12, 
+    tree(
+        6, 
+        tree(
+            2, 
+            nil, 
+            tree(
+                4, 
+                nil, 
+                nil
+                )
+            ), 
+        tree(
+            8, 
+            nil, 
+            tree(10, nil, nil)
+            )
+        ), 
+    tree(
+        14, 
+        nil, 
+        tree(
+            18, 
+            tree(16, nil, nil), 
+            tree(20, nil, nil)
+        )
+    )
+)
+```
+
 #### Insert Method
 
 ##### Python
@@ -41,6 +105,17 @@ Este método recibe por parámetros un árbol y un vértice, y devuelve el árbo
 ##### Prolog
 
 Este método recibe un vértice y un árbol, y devuelve el árbol con el vértice insertado en la posición que corresponde. El procedimiento consiste en comparar el vértice nuevo con el vértice actual del árbol y moverse hacia la rama izquierda o derecha según corresponda. Se repite este procedimiento hasta llegar a la posición correcta del árbol y el vértice nuevo se añade como una hoja en esa posición.
+
+#### Find Method
+
+##### Python
+
+Este método recibe el valor de un vértice parámetro y devuelve el subarbol que tiene como raiz el nodo encontrado. En caso de no encontrar el nodo, devuelve None. El procedimiento consiste en ir comparando el vértice que se esta buscando con el vértice actual del grafo y moverse hacia la rama derecha o izquierda según corresponda hasta encontrar el vértice buscado o hasta que se llegue a una hoja del árbol y no se haya podido encontrar el vértice.
+
+##### Prolog
+
+Este método busca un vértice en un árbol y lo devuelve en caso de que lo logre encontrar. Como es un árbol binario de búsqueda entonces se busca de manera ordenada preguntando en cada paso si tiene que mover a la izquierda o a la derecha hasta que encuentre el nodo o se quede sin opciones.
+
 
 ### Documentación del Usuario
 
