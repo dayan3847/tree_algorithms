@@ -1,5 +1,12 @@
 % Ordered Tree
 
+% Insert (Insert a node)
+% insert(Node, Tree, NewTree)
+insert(Node, tree(Parent, nil, Right ), tree(Parent, tree(Node, nil, nil), Right)) :- Node < Parent, !.
+insert(Node, tree(Parent, Left, nil ), tree(Parent, Left, tree(Node, nil, nil))) :- Node > Parent, !.
+insert(Node, tree(Parent, Left, Right), tree(Parent, NewLeft, Right)) :- Node < Parent, insert(Node, Left, NewLeft), !.
+insert(Node, tree(Parent, Left, Right), tree(Parent, Left, NewRight)) :- Node > Parent, insert(Node, Right, NewRight), !.
+
 % Find (Ordered Search)
 % find(Node, Tree, NodeTree).
 find(Node, tree(Node, Left, Right), tree(Node, Left, Right)) :- !.
@@ -34,13 +41,6 @@ max(X, Y, Y) :- X < Y, !.
 % level(Level, Tree)
 level(0, nil) :- !.
 level(Level, tree(_, Left, Right)) :- level(LeftLevel, Left), level(RightLevel, Right), max(LeftLevel, RightLevel, MaxLevel), Level is MaxLevel + 1.
-
-% Insert (Insert a node)
-% insert(Node, Tree, NewTree)
-insert(Node, tree(Parent, nil, Right ), tree(Parent, tree(Node, nil, nil), Right)) :- Node < Parent, !.
-insert(Node, tree(Parent, Left, nil ), tree(Parent, Left, tree(Node, nil, nil))) :- Node > Parent, !.
-insert(Node, tree(Parent, Left, Right), tree(Parent, NewLeft, Right)) :- Node < Parent, insert(Node, Left, NewLeft), !.
-insert(Node, tree(Parent, Left, Right), tree(Parent, Left, NewRight)) :- Node > Parent, insert(Node, Right, NewRight), !.
 
 % Preorder
 % preorder(Tree, List)

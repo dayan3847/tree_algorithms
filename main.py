@@ -36,9 +36,9 @@ def my_main():
             value = int(input("Introduzca un valor para el vértice: "))
 
             print("Via Python:")
-            tree_clone: Tree = deepcopy(tree)
-            tree_clone.insert(value)
-            print("[{'NewTree': '" + str(tree_clone) + "'}]")
+            python_result: Tree = deepcopy(tree)
+            python_result.insert(value)
+            print("[{'NewTree': '" + str(python_result) + "'}]")
 
             print("Via Prolog:")
             prolog_query = f"insert({value}, {str(tree_prolog)}, NewTree)"
@@ -46,17 +46,16 @@ def my_main():
             print(prolog_result)
 
         elif option == 2:
-            print("1. Usar Python.")
-            print("2. Usar Prolog.")
-            option = int(input("Selecicone una opcion: "))
-            if option == 1:
-                value = int(input("Introduzca el valor del vértice: "))
-                print(tree.exists_vertex(Tree(value), tree))
-            elif option == 2:
-                value = input("Introduzca un valor para el vértice: ")
-                prolog_query = f"find({value},{tree_prolog}, SubTree)"
-                result = bool(list(prolog.query(prolog_query)))
-                print(result)
+            value = int(input("Introduzca el valor del vértice: "))
+
+            print("Via Python:")
+            python_result = tree.find(value)
+            print("[{'NodeTree': '" + str(python_result) + "'}]")
+
+            print("Via Prolog:")
+            prolog_query = f"find({value},{tree_prolog}, NodeTree)"
+            prolog_result = list(prolog.query(prolog_query))
+            print(prolog_result)
 
         # elif option == 3:
         #     character = input("Introduzca la letra del vértice: ")

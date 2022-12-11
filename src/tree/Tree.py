@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class Tree:
     data: float
     left: 'Tree'
@@ -45,22 +48,35 @@ class Tree:
     def __ne__(self, other: 'Tree'):
         return self.data != other.data
 
-    # add_new_vertex
-    def insert(self, new_data: float):
-        if new_data < self.data:
+    # Insert (Insert a node)
+    def insert(self, node_data: float):
+        if node_data < self.data:
             if self.left is None:
-                self.left = Tree(new_data)
+                self.left = Tree(node_data)
                 self.left.parent = self
                 return
             else:
-                self.left.insert(new_data)
+                self.left.insert(node_data)
         else:
             if self.right is None:
-                self.right = Tree(new_data)
+                self.right = Tree(node_data)
                 self.right.parent = self
                 return
             else:
-                self.right.insert(new_data)
+                self.right.insert(node_data)
+
+    # Find (Ordered Search)
+    def find(self, node_data: float) -> 'Tree':
+        if self.data == node_data:
+            return self
+        elif node_data < self.data:
+            if self.left is not None:
+                return self.left.find(node_data)
+        else:
+            if self.right is not None:
+                return self.right.find(node_data)
+
+        return None
 
     def in_order_tour(self):
         if None is not self.left:
@@ -74,16 +90,6 @@ class Tree:
             print(tree.data, end=", ")
             self.preorder_tour(tree.left)
             self.preorder_tour(tree.right)
-
-    def exists_vertex(self, vertex: 'Tree', tree: 'Tree') -> 'bool':
-        if not tree:
-            return False
-        elif tree == vertex:
-            return True
-        elif vertex < tree:
-            return self.exists_vertex(vertex, tree.left)
-        else:
-            return self.exists_vertex(vertex, tree.right)
 
     def get_vertex(self, vertex: 'Tree', tree: 'Tree') -> 'Tree':
         if not tree:
